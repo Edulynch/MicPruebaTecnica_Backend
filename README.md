@@ -1,6 +1,3 @@
-Aquí tienes un ejemplo completo de un archivo **README.md** para tu repositorio GitHub:
-
-```markdown
 # EduLynch Micro Prueba Técnica Backend
 
 Este repositorio contiene el backend de la prueba técnica de EduLynch, desarrollado en **Spring Boot**. El sistema implementa diversas funcionalidades, como autenticación con JWT, gestión de usuarios y roles, catálogo de productos, carretilla de compras, y gestión de órdenes.
@@ -201,6 +198,3 @@ Este proyecto se distribuye bajo la licencia **[Apache License 2.0](https://www.
 ---
 
 ¡Gracias por revisar este proyecto! Si tienes alguna duda o sugerencia, no dudes en abrir un issue o contactarme.
-```
-
-Este README incluye una descripción general del proyecto, instrucciones de instalación y ejecución, detalles de los endpoints principales, la estructura del proyecto y un resumen de las mejoras implementadas y pendientes. Puedes ajustarlo según tus necesidades o agregar información adicional según evolucione el proyecto.
