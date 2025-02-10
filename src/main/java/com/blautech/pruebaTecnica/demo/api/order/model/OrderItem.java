@@ -1,6 +1,7 @@
 package com.blautech.pruebaTecnica.demo.api.order.model;
 
 import com.blautech.pruebaTecnica.demo.api.catalog.model.Product;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ public class OrderItem {
     // Relación con el pedido
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
+    @JsonBackReference
     private Order order;
 
     // Producto comprado

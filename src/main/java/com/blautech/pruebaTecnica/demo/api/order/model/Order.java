@@ -24,8 +24,9 @@ public class Order {
     // Dirección de envío del pedido
     private String shippingAddress;
 
-    // Estado del pedido (posibles valores: PENDING, CONFIRMED, PROCESSING, SHIPPED, DELIVERED)
-    private String status;
+    // Usamos el enum para el estado
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
     private LocalDateTime createdDate;
 
@@ -35,4 +36,9 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> items = new ArrayList<>();
+
+    // Metodo auxiliar para obtener el nombre en español del estado
+    public String getStatusDisplayName() {
+        return status != null ? status.getDisplayName() : "";
+    }
 }
