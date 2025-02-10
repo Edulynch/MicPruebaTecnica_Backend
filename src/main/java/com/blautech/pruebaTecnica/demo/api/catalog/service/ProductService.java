@@ -3,6 +3,8 @@ package com.blautech.pruebaTecnica.demo.api.catalog.service;
 import com.blautech.pruebaTecnica.demo.api.catalog.model.Product;
 import com.blautech.pruebaTecnica.demo.api.catalog.repository.ProductRepository;
 import com.blautech.pruebaTecnica.demo.util.StatusConstants;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,8 +19,9 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    // Metodo paginado para obtener todos los productos
+    public Page<Product> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable);
     }
 
     public List<Product> getActiveProducts(){
@@ -58,7 +61,6 @@ public class ProductService {
         productRepository.save(existing);
     }
 
-    // Nuevo metodo para buscar productos por descripción (ignorando mayúsculas/minúsculas)
     public List<Product> searchProducts(String query) {
         return productRepository.findByDescriptionContainingIgnoreCase(query);
     }

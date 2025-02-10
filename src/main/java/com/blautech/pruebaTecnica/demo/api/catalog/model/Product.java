@@ -18,26 +18,21 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // URL o path de la imagen del artículo
     private String image;
 
-    // Descripción del producto
     private String description;
 
-    // Monto (precio) del producto
     private BigDecimal amount;
 
-    // Cantidad disponible
+    @Column(name = "available_quantity")
     private Integer availableQuantity;
 
-    // Status: 0 = desactivado, 1 = activado (se elige en la creación)
     private Integer status;
 
-    // Fecha de creación (se asigna en @PrePersist)
-    @Column(nullable = false, updatable = false)
+    @Column(name = "created_date", nullable = false, updatable = false)
     private LocalDateTime createdDate;
 
-    // Fecha de modificación (nula en creación, se actualiza en @PreUpdate)
+    @Column(name = "modified_date")
     private LocalDateTime modifiedDate;
 
     @PrePersist

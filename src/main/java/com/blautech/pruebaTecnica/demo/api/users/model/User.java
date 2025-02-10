@@ -2,13 +2,15 @@ package com.blautech.pruebaTecnica.demo.api.users.model;
 
 import com.blautech.pruebaTecnica.demo.api.roles.model.Role;
 import com.blautech.pruebaTecnica.demo.util.StatusConstants;
-import com.blautech.pruebaTecnica.demo.validation.Adult; // Actualizado
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.blautech.pruebaTecnica.demo.validation.Adult;
+import com.blautech.pruebaTecnica.demo.validation.ValidEmail;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -32,12 +34,12 @@ public class User {
     private String lastName;
 
     @NotBlank(message = "El email es obligatorio")
-    @Email(message = "El email debe tener un formato válido")
+    @ValidEmail
     @Column(unique = true, nullable = false)
     private String email;
 
     @NotNull(message = "La fecha de nacimiento es obligatoria")
-    @Adult  // Validación para que el usuario sea mayor de 18 años (importado desde el paquete validation)
+    @Adult(message = "El usuario debe ser mayor de 18 años")
     @Column(nullable = false)
     private LocalDate birthDate;
 
@@ -56,14 +58,14 @@ public class User {
 
     @NotBlank(message = "La contraseña es obligatoria")
     @Column(nullable = false)
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
-            joinColumns = @JoinColumn(name="user_id"),
-            inverseJoinColumns = @JoinColumn(name="role_id")
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
 

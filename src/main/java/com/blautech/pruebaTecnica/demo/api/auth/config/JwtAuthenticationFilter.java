@@ -11,7 +11,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 import java.io.IOException;
 import java.util.List;
@@ -40,10 +39,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(email, null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (JwtException e) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token inválido o expirado", e);
+                response.sendError(HttpStatus.UNAUTHORIZED.value(), "Token inválido o expirado");
+                return; // Se termina la cadena de filtros
             }
         }
         filterChain.doFilter(request, response);
     }
-
 }

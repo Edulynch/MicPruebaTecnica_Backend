@@ -2,6 +2,8 @@ package com.blautech.pruebaTecnica.demo.api.catalog.controller;
 
 import com.blautech.pruebaTecnica.demo.api.catalog.model.Product;
 import com.blautech.pruebaTecnica.demo.api.catalog.service.ProductService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -17,14 +19,18 @@ public class ProductController {
         this.productService = productService;
     }
 
+    // Endpoint paginado para obtener todos los productos
+    // Ejemplo de uso: GET /api/catalog?page=0&size=10&sort=createdDate,desc
     @GetMapping
-    public List<Product> getAllProducts(){
-        return productService.getAllProducts();
+    public ResponseEntity<Page<Product>> getAllProducts(Pageable pageable){
+        Page<Product> products = productService.getAllProducts(pageable);
+        return ResponseEntity.ok(products);
     }
 
     @GetMapping("/active")
-    public List<Product> getActiveProducts(){
-        return productService.getActiveProducts();
+    public ResponseEntity<List<Product>> getActiveProducts(){
+        List<Product> products = productService.getActiveProducts();
+        return ResponseEntity.ok(products);
     }
 
     @GetMapping("/{id}")
@@ -54,7 +60,6 @@ public class ProductController {
         return ResponseEntity.ok().build();
     }
 
-    // Nuevo endpoint para búsqueda de productos
     @GetMapping("/search")
     public ResponseEntity<List<Product>> searchProducts(@RequestParam("query") String query) {
         List<Product> products = productService.searchProducts(query);
