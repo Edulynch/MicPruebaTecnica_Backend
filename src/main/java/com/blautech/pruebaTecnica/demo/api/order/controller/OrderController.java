@@ -1,10 +1,15 @@
 package com.blautech.pruebaTecnica.demo.api.order.controller;
 
 import com.blautech.pruebaTecnica.demo.api.order.model.Order;
+import com.blautech.pruebaTecnica.demo.api.order.model.OrderStatus;
 import com.blautech.pruebaTecnica.demo.api.order.service.OrderService;
+import com.blautech.pruebaTecnica.demo.api.users.model.User;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -72,4 +77,5 @@ public class OrderController {
         Order order = orderService.getOrderDetail(orderId);
         return ResponseEntity.ok(order);
     }
+
 }

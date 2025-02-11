@@ -42,6 +42,53 @@ public class UserService {
         return userRepository.findByStatus(StatusConstants.ACTIVE);
     }
 
+
+    // MÉTODOS NUEVOS PARA USO ADMINISTRATIVO
+
+    // Obtener un usuario por ID
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+    }
+
+    // Actualizar un usuario por ID (solo para uso administrativo)
+    public User updateUserById(Long id, User updatedData, String performedBy) {
+        User existing = getUserById(id);
+        existing.setFirstName(updatedData.getFirstName());
+        existing.setLastName(updatedData.getLastName());
+        existing.setShippingAddress(updatedData.getShippingAddress());
+        existing.setBirthDate(updatedData.getBirthDate());
+        if (updatedData.getPassword() != null && !updatedData.getPassword().isBlank()) {
+            existing.setPassword(passwordEncoder.encode(updatedData.getPassword()));
+        }
+        User updatedUser = userRepository.save(existing);
+        auditLogService.log("UPDATE_ADMIN", performedBy, "Actualizó usuario con id=" + id);
+        return updatedUser;
+    }
+
+    // Desactivar (eliminar) un usuario por ID
+    public void deactivateUserById(Long id, String performedBy) {
+        User user = getUserById(id);
+        user.setStatus(StatusConstants.INACTIVE);
+        userRepository.save(user);
+        auditLogService.log("DELETE_ADMIN", performedBy, "Desactivó usuario con id=" + id);
+    }
+
+    // Activar un usuario por ID
+    public void activateUserById(Long id, String performedBy) {
+        User user = getUserById(id);
+        user.setStatus(StatusConstants.ACTIVE);
+        userRepository.save(user);
+        auditLogService.log("ACTIVATE_ADMIN", performedBy, "Activó usuario con id=" + id);
+    }
+
+    // Guardar cambios en un usuario (usado para actualizar el rol)
+    public User saveUser(User user, String performedBy) {
+        User saved = userRepository.save(user);
+        auditLogService.log("UPDATE_ADMIN", performedBy, "Actualizó usuario con id=" + user.getId());
+        return saved;
+    }
+
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));

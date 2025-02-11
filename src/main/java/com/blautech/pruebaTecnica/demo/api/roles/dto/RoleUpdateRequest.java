@@ -1,13 +1,18 @@
 package com.blautech.pruebaTecnica.demo.api.roles.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class RoleUpdateRequest {
     private String role;
 
-    public String getRole() {
-        return role;
+    public RoleUpdateRequest() {
     }
 
-    public void setRole(String role) {
+    public RoleUpdateRequest(String role) {
         this.role = role;
     }
+
 }

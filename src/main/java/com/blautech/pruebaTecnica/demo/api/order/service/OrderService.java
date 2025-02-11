@@ -38,22 +38,6 @@ public class OrderService {
     }
 
     /**
-     * Verifica que la orden exista y pertenezca al usuario (o que el usuario tenga rol WORKER/ADMIN).
-     */
-    public Order getOrderForCurrentUser(Long orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Orden no encontrada"));
-        User currentUser = getCurrentUser();
-        boolean isWorkerOrAdmin = currentUser.getRoles().stream()
-                .anyMatch(role -> role.getName().equalsIgnoreCase("WORKER") ||
-                        role.getName().equalsIgnoreCase("ADMIN"));
-        if (!isWorkerOrAdmin && !order.getUser().getId().equals(currentUser.getId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acceso denegado");
-        }
-        return order;
-    }
-
-    /**
      * Inicia un pedido a partir del carrito, creando un pedido en estado PENDING.
      *
      * @param shippingAddress Dirección de envío ingresada.
@@ -162,5 +146,47 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    // MÉTODOS NUEVOS PARA ADMINISTRACIÓN
+
+    // Obtener todas las órdenes (sin restricciones de usuario)
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
+    }
+
+    // Obtener detalle de una orden sin restricciones (para administración)
+    public Order getOrderDetailForAdmin(Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Orden no encontrada"));
+    }
+
+    // Actualizar el estatus de una orden desde el módulo administrativo
+    @Transactional
+    public Order updateOrderStatusByAdmin(Long orderId, OrderStatus newStatus, User currentUser) {
+        Order order = getOrderDetailForAdmin(orderId);
+        boolean isAdmin = currentUser.getRoles().stream()
+                .anyMatch(r -> r.getName().equalsIgnoreCase("ADMIN"));
+        boolean isWorker = currentUser.getRoles().stream()
+                .anyMatch(r -> r.getName().equalsIgnoreCase("WORKER"));
+        if (isWorker && newStatus == OrderStatus.CANCELLED) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Worker no puede cancelar órdenes");
+        }
+        order.setStatus(newStatus);
+        Order updatedOrder = orderRepository.save(order);
+        return updatedOrder;
+    }
+
+    // Metodo usado para operaciones de usuario normal (por ejemplo, confirmar o cancelar desde el lado de usuario)
+    public Order getOrderForCurrentUser(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Orden no encontrada"));
+        User currentUser = getCurrentUser();
+        boolean isWorkerOrAdmin = currentUser.getRoles().stream()
+                .anyMatch(role -> role.getName().equalsIgnoreCase("WORKER") ||
+                        role.getName().equalsIgnoreCase("ADMIN"));
+        if (!isWorkerOrAdmin && !order.getUser().getId().equals(currentUser.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acceso denegado");
+        }
+        return order;
+    }
 
 }
