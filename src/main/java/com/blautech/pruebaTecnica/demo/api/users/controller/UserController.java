@@ -78,4 +78,5 @@ public class UserController {
         UserProfileDTO updatedProfile = userService.updateProfileForCurrentUser(updateDTO, performedBy);
         return ResponseEntity.ok(updatedProfile);
     }
+
 }
